@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 
 print(cv2.__file__)
-cap = cv2.VideoCapture('./test.mp4')
+cap = cv2.VideoCapture('/dev/video0')
 
 drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
@@ -19,6 +19,7 @@ while cap.isOpened():
 
     drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
     cv2.imshow("dhjsdahdsl", frame)
-
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 cap.release()
 cv2.destroyAllWindows()
