@@ -1,11 +1,11 @@
 1:
-  lower_arm_l: 180
-  upper_arm_l: 90
-  lower_arm_r: 180
-  upper_arm_r: 270
-  lower_leg_l: 180
-  upper_leg_l: 180
-  lower_leg_r: 180
-  upper_leg_r: 180
-  body:
-  shoulder_dist: 0.35
+  lower_arm_l: 270
+  upper_arm_l: 200
+  lower_arm_r: 90
+  upper_arm_r: 30
+  lower_leg_l: 90
+  upper_leg_l: 90
+  lower_leg_r: 90
+  upper_leg_r: 90
+  body: 180
+  shoulder_dist: 0.25
