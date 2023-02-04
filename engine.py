@@ -33,10 +33,6 @@ class GameEngine():
         self.cap = cap
         self.update()
 
-    def loadConfig(self,path):
-        self.poses = yaml.load(open(path, "r"), Loader=yaml.FullLoader)
-        print(self.poses)
-
     def update(self):
         _, frame = self.cap.read()
 
