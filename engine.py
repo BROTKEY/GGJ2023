@@ -17,11 +17,11 @@ class BodyEngine():
             return
         for n, i in enumerate(result.pose_landmarks.landmark):
             self.marks[n] = np.array((i.x, i.y))
-    
+
     @property
     def points(self):
         return self.marks
-    
+
     def get_point_from_name(self, name):
         return self.marks[self.landmark_names[name]]
 
@@ -67,10 +67,10 @@ class ShadowEngine():
         self.frame = frame
 
     def drawPose(self, points, color:tuple, thicc:int):
-        shape = np.array((self.frame.shape[0], self.frame.shape[1]))
+        shape = np.array((self.frame.shape[1], self.frame.shape[0]))
         for point in points:
             if point not in self.connections:
-               continue 
+               continue
             for endpoint in self.connections[point]:
                 if endpoint in points:
                     start_point = points[point] * shape
@@ -79,6 +79,6 @@ class ShadowEngine():
 
     def get_frame(self):
         return self.frame
-    
+
     def close(self):
         self.cap.release()
