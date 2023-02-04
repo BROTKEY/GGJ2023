@@ -3,29 +3,7 @@ import numpy as np
 import mediapipe as mp
 import cv2
 
-class BodyEngine():
-    def __init__(self):
-        self.landmarks = yaml.load(open("landmarks.yaml", "r"), Loader=yaml.FullLoader)
-        self.landmark_names = {v: k for k, v in self.landmarks.items()}
-        mp_pose = mp.solutions.pose
-        self.pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
-        self.marks = {}
-
-    def process_frame(self, frame):
-        result = self.pose.process(frame)
-        if not result.pose_landmarks:
-            return
-        for n, i in enumerate(result.pose_landmarks.landmark):
-            self.marks[n] = np.array((i.x, i.y))
-
-    @property
-    def points(self):
-        return self.marks
-
-    def get_point_from_name(self, name):
-        return self.marks[self.landmark_names[name]]
-
-class ShadowEngine():
+class GameEngine():
     connections = {
         11 : [12,13,23],
         12 : [14, 24],
@@ -82,3 +60,25 @@ class ShadowEngine():
 
     def close(self):
         self.cap.release()
+
+class BodyEngine():
+    def __init__(self):
+        self.landmarks = yaml.load(open("landmarks.yaml", "r"), Loader=yaml.FullLoader)
+        self.landmark_names = {v: k for k, v in self.landmarks.items()}
+        mp_pose = mp.solutions.pose
+        self.pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
+        self.marks = {}
+
+    def process_frame(self, frame):
+        result = self.pose.process(frame)
+        if not result.pose_landmarks:
+            return
+        for n, i in enumerate(result.pose_landmarks.landmark):
+            self.marks[n] = np.array((i.x, i.y))
+
+    @property
+    def points(self):
+        return self.marks
+
+    def get_point_from_name(self, name):
+        return self.marks[self.landmark_names[name]]

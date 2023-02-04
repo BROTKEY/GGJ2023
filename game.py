@@ -1,10 +1,10 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-from engine import BodyEngine, ShadowEngine
+from engine import BodyEngine, GameEngine
 import yaml
 
-renderer = ShadowEngine(cv2.VideoCapture(0))
+renderer = GameEngine(cv2.VideoCapture(0))
 body = BodyEngine()
 
 shadow_color = (100,100,100)
