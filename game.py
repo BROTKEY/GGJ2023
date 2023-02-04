@@ -25,7 +25,6 @@ body_bones = dict({
     })
 
 def get_angles(landmarks):
-    landmarks = landmarks.landmark
     d = dict()
     for key in body_bones:
         bone = body_bones[key]
@@ -39,13 +38,16 @@ def get_angles(landmarks):
         d[key] = np.arctan2(dr[0], dr[1])
     return d
 
+duck = cv2.imread("debugger.jpeg")
 
 # Run the game loop
 running = True
 while running:
     renderer.update()
     body.process_frame(renderer.get_frame())
+    renderer.drawImage(duck, (320,230), (64,64))
     renderer.drawPose(body.points, (0,0,0), 5)
+
 
     cv2.imshow("\"Game\"", renderer.get_frame())
     if cv2.waitKey(1) & 0xFF == ord('q'):

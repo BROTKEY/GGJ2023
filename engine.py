@@ -1,6 +1,7 @@
 import yaml
 import numpy as np
 import mediapipe as mp
+from PIL import Image
 import cv2
 
 class GameEngine():
@@ -49,6 +50,13 @@ class GameEngine():
                     start_point = points[point] * shape
                     end_point = points[endpoint] * shape
                     self.frame = cv2.line(self.frame, start_point.astype(int), end_point.astype(int), color, thicc)
+
+    def drawImage(self, image, xy, size):
+        img = cv2.resize(image, size)
+        img = Image.fromarray(img)
+        frame = Image.fromarray(self.frame)
+        frame.paste(img, xy)
+        self.frame = np.array(frame)
 
     def get_frame(self):
         return self.frame
