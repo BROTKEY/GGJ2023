@@ -55,8 +55,9 @@ class GameEngine():
         img = cv2.resize(image, size)
         img = Image.fromarray(img)
         frame = Image.fromarray(self.frame)
-        frame.paste(img, xy)
-        self.frame = np.array(frame)
+        frame = frame.convert("RGBA")
+        frame.paste(img, xy, mask=img)
+        self.frame = np.array(frame.convert("RGB"))
 
     def get_frame(self):
         return self.frame

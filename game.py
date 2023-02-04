@@ -38,14 +38,14 @@ def get_angles(landmarks):
         d[key] = np.arctan2(dr[0], dr[1])
     return d
 
-duck = cv2.imread("debugger.jpeg")
+duck = cv2.imread("debugger_transparent.png", cv2.IMREAD_UNCHANGED)
 
 # Run the game loop
 running = True
 while running:
     renderer.update()
     body.process_frame(renderer.get_frame())
-    renderer.drawImage(duck, (320,230), (64,64))
+    renderer.drawImage(duck, (320,230), (128,128))
     renderer.drawPose(body.points, (0,0,0), 5)
     y,x,_ = renderer.get_frame().shape
     s = shadow.calculatePose([200,300], x,y, int(1))
