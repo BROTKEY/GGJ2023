@@ -1,7 +1,6 @@
 import cv2
 import mediapipe as mp
 
-print(cv2.__file__)
 cap = cv2.VideoCapture(0)
 
 mp_pose = mp.solutions.pose
@@ -49,6 +48,7 @@ while cap.isOpened():
         continue
 
     cv2.imshow("dhjsdahdsl", frame)
-    cv2.waitKey(1)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 cap.release()
 cv2.destroyAllWindows()
