@@ -48,9 +48,6 @@ with open('landmarks.yaml', 'r') as f:
     landmarks = yaml.safe_load(f)
 landmark_names = {v: k for k, v in landmarks.items()}
 
-print(landmarks)
-print(landmark_names)
-
 # https://google.github.io/mediapipe/solutions/pose
 connections = {11 : [12,13,23],
                12 : [14, 24],
