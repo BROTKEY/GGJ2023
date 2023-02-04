@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+import yaml
 
 cap = cv2.VideoCapture(0)
 
@@ -12,6 +13,13 @@ skeleton_color = (0,0,0)
 skeleton_thickness = 4
 
 pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
+
+with open('landmarks.yaml', 'r') as f:
+    landmarks = yaml.safe_load(f)
+landmark_names = {v: k for k, v in landmarks.items()}
+
+print(landmarks)
+print(landmark_names)
 
 # https://google.github.io/mediapipe/solutions/pose
 connections = {11 : [12,13,23],
