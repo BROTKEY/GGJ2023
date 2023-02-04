@@ -5,3 +5,5 @@ lib64
 share/
 pyvenv.cfg
 Scripts/
+__pycache__/
+*.orig

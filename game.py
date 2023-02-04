@@ -1,11 +1,11 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-from engine import BodyEngine, GameEngine
-import yaml
+from engine import BodyEngine, GameEngine, PosesEngine
 
 renderer = GameEngine(cv2.VideoCapture(0))
 body = BodyEngine()
+shadow = PosesEngine()
 
 shadow_color = (100,100,100)
 shadow_thickness = 10
@@ -47,6 +47,9 @@ while running:
     body.process_frame(renderer.get_frame())
     renderer.drawImage(duck, (320,230), (64,64))
     renderer.drawPose(body.points, (0,0,0), 5)
+    y,x,_ = renderer.get_frame().shape
+    s = shadow.calculatePose([200,300], x,y, int(1))
+    renderer.drawPose(s,(100,100,100),20)
 
 
     cv2.imshow("\"Game\"", renderer.get_frame())
