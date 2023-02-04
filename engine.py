@@ -61,6 +61,44 @@ class ShadowEngine():
 
     def update(self):
         _, frame = self.cap.read()
+        
+    def calculateBody(self, center, shoulder_dist, upper_body_dist, hip_dist):
+        left_shoulder = center + np.array([shoulder_dist/2, upper_body_dist/2])
+        left_hip = center + np.array([shoulder_dist/2, -upper_body_dist/2])
+        right_shoulder = center + np.array([-shoulder_dist/2, upper_body_dist/2])
+        right_hip = center + np.array([-shoulder_dist/2, -upper_body_dist/2])
+        return (left_hip, left_shoulder,right_hip, right_shoulder )
+
+    def calculatePartFromAngle(self, origin, shoulder_dist, angle):
+        return origin + [np.cos(angle)*shoulder_dist, np.sin(angle) *len]
+
+    def toCoords(self, body, elbow_l, elbow_r, wrist_l, wrist_r, knee_l, knee_r, ankle_l, ankle_r):
+        return {
+            23: body[0],
+            11: body[1],
+            24
+        }
+
+    def drawPose(self, center, screenSizeX,screenSizeY):
+        center = np.array(center)/ np.array([screenSizeX, screenSizeY])
+
+        shoulder_dist = float(self.poses["shoulder_dist"])
+        upper_body_dist = shoulder_dist * 1.5
+        hip_dist = shoulder_dist * 0.8
+
+        body = self.calculateBody(center, shoulder_dist, upper_body_dist, hip_dist)
+
+        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist, float(self.poses["upper_arm_l"]))
+        elbow_r = self.calculatePartFromAngle(body[2], shoulder_dist, float(self.poses["upper_arm_r"]))
+        wrist_l = self.calculatePartFromAngle(elbow_l, shoulder_dist, float(self.poses["lower_arm_l"]))
+        wrist_r = self.calculatePartFromAngle(elbow_r, shoulder_dist, float(self.poses["lower_arm_r"]))
+
+        knee_l = self.calculatePartFromAngle(body[0], shoulder_dist, float(self.poses["upper_leg_l"]))
+        knee_r = self.calculatePartFromAngle(body[3], shoulder_dist, float(self.poses["upper_leg_r"]))
+        ankle_l = self.calculatePartFromAngle(knee_l, shoulder_dist, float(self.poses["lower_leg_l"]))
+        ankle_r = self.calculatePartFromAngle(knee_r, shoulder_dist, float(self.poses["lower_leg_r"]))
+
+        return (body, elbow_l, elbow_r, wrist_l, wrist_r, knee_l, knee_r, ankle_l, ankle_r)
 
         frame = cv2.flip(frame, 1)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

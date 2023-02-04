@@ -83,6 +83,10 @@ while running:
     renderer.update()
     body.process_frame(renderer.get_frame())
     renderer.drawPose(body.points, (0,0,0), 5)
+    print(get_angles(result.pose_landmarks))
+
+
+
 
     cv2.imshow("\"Game\"", renderer.get_frame())
     if cv2.waitKey(1) & 0xFF == ord('q'):
