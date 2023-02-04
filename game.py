@@ -37,12 +37,12 @@ running = True
 while running and cap.isOpened():
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
-    #BaseImage = np.ones([720,1280,3])
-    BaseImage = frame
+    #base_image = np.ones([720,1280,3])
+    base_image = frame
 
     RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     result = pose.process(RGB)
-    y,x,_ = BaseImage.shape
+    y,x,_ = base_image.shape
 
     drawn_connections = []
     for connection in connections:
@@ -50,18 +50,20 @@ while running and cap.isOpened():
             mark = result.pose_landmarks.landmark[connection]
             mark = convert_xy(mark.x, mark.y,x,y)
             for end in connections[connection]:
-                if [mark, end].sort() in drawn_connections:
+                drawn_connection = [connection, end]
+                drawn_connection.sort()
+                if drawn_connection in drawn_connections:
                     continue
                 point = result.pose_landmarks.landmark[end]
                 point = convert_xy(point.x, point.y,x,y)
-                BaseImage = cv2.line(BaseImage, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), (100, 100, 100), 10)
-                BaseImage = cv2.line(BaseImage, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), (0,0,0), 4)
-                drawn_connections.append([mark, end].sort())
+                base_image = cv2.line(base_image, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), (100, 100, 100), 10)
+                base_image = cv2.line(base_image, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), (0,0,0), 4)
+                drawn_connections.append(drawn_connection)
         except Exception as e:
             print(e)
             continue
 
-    cv2.imshow("dhjsdahdsl", BaseImage)
+    cv2.imshow("dhjsdahdsl", base_image)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 cap.release()
