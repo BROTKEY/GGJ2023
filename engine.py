@@ -79,7 +79,7 @@ class PosesEngine():
         return (left_hip, left_shoulder, right_hip, right_shoulder)
 
     def calculatePartFromAngle(self, origin, shoulder_dist, ratio, angle):
-        return origin + [np.cos(angle)*(shoulder_dist*ratio), np.sin(angle) * shoulder_dist]
+        return [origin[0] + np.sin(angle/2) * shoulder_dist, origin[1] + np.cos(angle/2)*(shoulder_dist*ratio)]
 
     def toCoords(self, body, elbow_l, elbow_r, wrist_l, wrist_r, knee_l, knee_r, ankle_l, ankle_r):
         return {
@@ -96,27 +96,73 @@ class PosesEngine():
             27: ankle_l,
             28: ankle_r,
         }
-    
-    def calculatePose(self, center, screenSizeX,screenSizeY, number):
-        center = np.array(center)/ np.array([screenSizeY, screenSizeX])
-        print(center)
 
+    body_bones = dict({
+        "lower_arm_l" : [13, 15],
+        "lower_arm_r" : [14, 16],
+        "upper_arm_l" : [11 ,13],
+        "upper_arm_r" : [12 ,14],
+        "upper_leg_l" : [23, 25],
+        "upper_leg_r" : [24, 26],
+        "lower_leg_l" : [25, 27],
+        "lower_leg_r" : [26, 28],
+        "body": [23, 11 , 24, 12],
+        })
+    
+    def get_angles(self, landmarks):
+        d = dict()
+        for key in self.body_bones:
+            bone = self.body_bones[key]
+            if key == "body":
+                start = (landmarks[bone[0]] + landmarks[bone[2]])/2
+                stop = (landmarks[bone[1]] + landmarks[bone[3]])/2
+            else:
+                start = landmarks[bone[0]]
+                stop =  landmarks[bone[1]]
+            dr = stop - start
+            d[key] = np.arctan2(dr[0], dr[1])
+        return d
+    
+    def checkPose(self, landmarks):
+        magnitude = np.linalg.norm(landmarks[11] - landmarks[12])
+        if self.last_shoulder_dist - 0.4 <= magnitude <= self.last_shoulder_dist + 0.4:
+            angles = self.get_angles(landmarks)
+
+            valid = True
+            for key, value in self.conf[self.last_pose_number].items():
+                if key == "shoulder_dist": 
+                    continue
+                if not valid:
+                    return valid
+                valid = (value - 0.8 + math.pi <= (-1* angles[key]) + math.pi <= value + 0.8 + math.pi)
+                    
+            return valid
+        return False
+
+    
+    def calculatePose(self, center, screenSizeX,screenSizeY, pose_number):
+        center = np.array(center)/ np.array([screenSizeY, screenSizeX])
         
-        shoulder_dist = float(self.conf[number]["shoulder_dist"])
+        shoulder_dist = float(self.conf[pose_number]["shoulder_dist"])
         upper_body_dist = shoulder_dist * 1.8
         hip_dist = shoulder_dist * 0.8
 
-        body = self.calculateBody(center, shoulder_dist, upper_body_dist, hip_dist, float(self.conf[number]["body"]))
-        
-        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.6, float(self.conf[number]["upper_arm_l"]))
-        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.6, float(self.conf[number]["upper_arm_r"]))
-        wrist_l = self.calculatePartFromAngle(elbow_l, shoulder_dist,1, float(self.conf[number]["lower_arm_l"]))
-        wrist_r = self.calculatePartFromAngle(elbow_r, shoulder_dist,1, float(self.conf[number]["lower_arm_r"]))
+        body = self.calculateBody(center, shoulder_dist, upper_body_dist, hip_dist, float(self.conf[pose_number]["body"]))
 
-        knee_l = self.calculatePartFromAngle(body[0], shoulder_dist,1, float(self.conf[number]["upper_leg_l"]))
-        knee_r = self.calculatePartFromAngle(body[2], shoulder_dist,1, float(self.conf[number]["upper_leg_r"]))
-        ankle_l = self.calculatePartFromAngle(knee_l, shoulder_dist,1, float(self.conf[number]["lower_leg_l"]))
-        ankle_r = self.calculatePartFromAngle(knee_r, shoulder_dist,1, float(self.conf[number]["lower_leg_r"]))
+        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.6, float(self.conf[pose_number]["upper_arm_l"]))
+        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.6, float(self.conf[pose_number]["upper_arm_r"]))
+        wrist_l = self.calculatePartFromAngle(elbow_l, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_l"]))
+        wrist_r = self.calculatePartFromAngle(elbow_r, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_r"]))
+
+        knee_l = self.calculatePartFromAngle(body[0], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_l"]))
+        knee_r = self.calculatePartFromAngle(body[2], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_r"]))
+        ankle_l = self.calculatePartFromAngle(knee_l, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_l"]))
+        ankle_r = self.calculatePartFromAngle(knee_r, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_r"]))
+
+        self.last_shoulder_dist = shoulder_dist
+        self.last_pose_number = pose_number
+        self.last_center = center
+        
 
         return self.toCoords(body, elbow_l, elbow_r, wrist_l, wrist_r, knee_l, knee_r, ankle_l, ankle_r)
 
@@ -151,3 +197,24 @@ class ConfigLoader:
                     continue
                 raw[key][parts] = math.radians(raw[key][parts])
         self.conf = raw
+
+class ActionQueue:
+    def __init__(self):
+        self.actions ={0: "new_pose", 1: "check_valid", 2: "gen_new_number", 3: "wait_for_event"}
+        self.queue = [0]
+
+    def addToQueue(self,action):
+        if action in self.actions.keys():
+            self.queue.append(action)
+
+    def getFirstFromQueue(self):
+        return self.queue[0]
+
+    def getQueue(self):
+        return self.queue
+    
+    def forwardQueue(self):
+        self.queue.pop(0)
+
+
+        
