@@ -6,8 +6,13 @@ cap = cv2.VideoCapture(0)
 
 mp_pose = mp.solutions.pose
 
+shadow_color = (100,100,100)
+shadow_thickness = 10
+skeleton_color = (0,0,0)
+skeleton_thickness = 4
+
 pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
-                          
+
 # https://google.github.io/mediapipe/solutions/pose
 connections = {11 : [12,13,23],
                12 : [14, 24],
@@ -56,8 +61,8 @@ while running and cap.isOpened():
                     continue
                 point = result.pose_landmarks.landmark[end]
                 point = convert_xy(point.x, point.y,x,y)
-                base_image = cv2.line(base_image, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), (100, 100, 100), 10)
-                base_image = cv2.line(base_image, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), (0,0,0), 4)
+                base_image = cv2.line(base_image, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), shadow_color, shadow_thickness)
+                base_image = cv2.line(base_image, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), skeleton_color, skeleton_thickness)
                 drawn_connections.append(drawn_connection)
         except Exception as e:
             print(e)
