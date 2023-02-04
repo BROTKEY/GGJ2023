@@ -2,8 +2,11 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import yaml
+#from engine import BodyEngine
 
 cap = cv2.VideoCapture(0)
+
+# body = BodyEngine()
 
 mp_pose = mp.solutions.pose
 
@@ -88,12 +91,30 @@ while running and cap.isOpened():
     result = pose.process(RGB)
     y,x,_ = base_image.shape
 
+    one = [0,0]
+    two = [0,0]
+    three = [0,0]
+    four = [0,0]
+    
     drawn_connections = []
     for connection in connections:
         if connection is []:
             continue
         try:
             mark = result.pose_landmarks.landmark[connection]
+
+            if connection == 11:
+                one = np.array([mark.x, mark.y])
+            
+            if connection == 12:
+                two = np.array([mark.x, mark.y])
+
+            if connection == body_bones[""]:
+                three = np.array([mark.x, mark.y])
+
+            if connection == 24:
+                four = np.array([mark.x, mark.y])
+                
             mark = convert_xy(mark.x, mark.y, x, y)
             for end in connections[connection]:
                 point = result.pose_landmarks.landmark[end]
@@ -103,6 +124,8 @@ while running and cap.isOpened():
         except Exception as e:
             print(e)
             continue
+
+    print("ratio:", np.linalg.norm((one-two)) / np.linalg.norm((three-four)))
 
     cv2.imshow("dhjsdahdsl", base_image)
     if cv2.waitKey(1) & 0xFF == ord('q'):
