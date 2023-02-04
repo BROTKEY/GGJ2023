@@ -12,6 +12,36 @@ shadow_thickness = 10
 skeleton_color = (0,0,0)
 skeleton_thickness = 4
 
+body_bones = dict({
+    "lower_arm_l" : [13, 15],
+    "lower_arm_r" : [14, 16],
+    "upper_arm_l" : [11 ,13],
+    "upper_arm_r" : [12 ,14],
+    "upper_leg_l" : [23, 25],
+    "upper_leg_r" : [24, 26],
+    "lower_leg_l" : [25, 27],
+    "lower_leg_r" : [26, 28],
+    "body": [23, 11 , 24, 12],
+    })
+
+def landmark2vector(l):
+    return np.array([l.x, l.y])
+def get_angles(landmarks):
+    landmarks = landmarks.landmark
+    d = dict()
+    for key in body_bones:
+        bone = body_bones[key]
+        if key == "body":
+            start = (landmark2vector(landmarks[bone[0]]) + landmark2vector(landmarks[bone[2]]))/2
+            stop = (landmark2vector(landmarks[bone[1]]) + landmark2vector(landmarks[bone[3]]))/2
+        else:
+            start = landmark2vector(landmarks[bone[0]])
+            stop =  landmark2vector(landmarks[bone[1]])
+        dr = stop - start
+        d[key] = np.arctan2(dr[0], dr[1])
+    return d
+
+
 pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
 
 with open('landmarks.yaml', 'r') as f:
