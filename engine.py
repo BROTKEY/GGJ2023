@@ -31,14 +31,18 @@ class GameEngine():
         32 : [],
     }
 
-    def __init__(self, cap):
-        self.cap = cap
+    def __init__(self, xy_size, background, camera_size):
+        self.bg = cv2.resize(background, xy_size)
+        ratio = xy_size[1] / camera_size[0]
+        self.shape = np.array((camera_size[1]*ratio, camera_size[0]*ratio)).astype(int)
+        self.pose_offset = np.array(((xy_size[0] - camera_size[1]) / 2, 0))
         self.update()
 
     def update(self):
-        _, frame = self.cap.read()
-        frame = cv2.flip(frame, 1)
-        self.frame = frame
+        self.frame = self.bg.copy()
+
+    def drawLine(self, xy1:tuple, xy2:tuple, color:tuple, thicc:int):
+        self.frame = cv2.line(self.frame, xy1, xy2, color, thicc)
 
     def drawPose(self, points, color:tuple, thicc:int):
         shape = np.array((self.frame.shape[1], self.frame.shape[0]))
@@ -47,8 +51,8 @@ class GameEngine():
                continue
             for endpoint in self.connections[point]:
                 if endpoint in points:
-                    start_point = points[point] * shape
-                    end_point = points[endpoint] * shape
+                    start_point = points[point] * self.shape + self.pose_offset/2
+                    end_point = points[endpoint] * self.shape + self.pose_offset/2
                     self.frame = cv2.line(self.frame, start_point.astype(int), end_point.astype(int), color, thicc)
 
     def drawImage(self, image, xy, size):
@@ -56,12 +60,29 @@ class GameEngine():
         img = Image.fromarray(img)
         frame = Image.fromarray(self.frame)
         frame = frame.convert("RGBA")
-        frame.paste(img, xy, mask=img)
+        mask= img if img.format == "RGBA" else None
+        frame.paste(img, xy, mask=mask)
         self.frame = np.array(frame.convert("RGB"))
 
     def get_frame(self):
         return self.frame
 
+
+class Camera():
+    def __init__(self, device=0):
+        self.cap = cv2.VideoCapture(0)
+        _, frame = self.cap.read()
+        self.shapevar = frame.shape
+    @property
+    def frame(self):
+        _, frame = self.cap.read()
+        frame = cv2.flip(frame, 1)
+        return frame
+    
+    @property
+    def shape(self):
+        return self.shapevar
+    
     def close(self):
         self.cap.release()
 

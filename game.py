@@ -1,9 +1,11 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-from engine import BodyEngine, GameEngine, PosesEngine
+from engine import BodyEngine, GameEngine, PosesEngine, Camera
 
-renderer = GameEngine(cv2.VideoCapture(0))
+background = cv2.imread("debugger.jpeg")
+cam = Camera()
+renderer = GameEngine((1280,720), background, cam.shape)
 body = BodyEngine()
 shadow = PosesEngine()
 
@@ -44,17 +46,20 @@ duck = cv2.imread("debugger_transparent.png", cv2.IMREAD_UNCHANGED)
 running = True
 while running:
     renderer.update()
-    body.process_frame(renderer.get_frame())
-    renderer.drawImage(duck, (320,230), (128,128))
+    camframe = cam.frame
+    body.process_frame(camframe)
+    # renderer.frame = cv2.line(renderer.frame, (0,0), (1000000,1000000), (255,255,255), 10000)
+    # renderer.drawImage(duck, (320,230), (128,128))
+    # renderer.drawImage(camframe, (160,0), (960, 720))
     renderer.drawPose(body.points, (0,0,0), 5)
-    y,x,_ = renderer.get_frame().shape
-    s = shadow.calculatePose([200,300], x,y, int(1))
-    renderer.drawPose(s,(100,100,100),20)
+    # y,x,_ = renderer.get_frame().shape
+    # s = shadow.calculatePose([200,300], x,y, int(1))
+    # renderer.drawPose(s,(100,100,100),20)
 
 
     cv2.imshow("\"Game\"", renderer.get_frame())
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-renderer.close()
+cam.close()
 cv2.destroyAllWindows()
