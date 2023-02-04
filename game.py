@@ -102,18 +102,6 @@ while running and cap.isOpened():
             continue
         try:
             mark = result.pose_landmarks.landmark[connection]
-
-            if connection == 11:
-                one = np.array([mark.x, mark.y])
-            
-            if connection == 12:
-                two = np.array([mark.x, mark.y])
-
-            if connection == body_bones[""]:
-                three = np.array([mark.x, mark.y])
-
-            if connection == 24:
-                four = np.array([mark.x, mark.y])
                 
             mark = convert_xy(mark.x, mark.y, x, y)
             for end in connections[connection]:
@@ -124,8 +112,6 @@ while running and cap.isOpened():
         except Exception as e:
             print(e)
             continue
-
-    print("ratio:", np.linalg.norm((one-two)) / np.linalg.norm((three-four)))
 
     cv2.imshow("dhjsdahdsl", base_image)
     if cv2.waitKey(1) & 0xFF == ord('q'):
