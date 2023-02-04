@@ -17,21 +17,25 @@ pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
 connections = {11 : [12,13,23],
                12 : [14, 24],
                13 : [15],
-               14 : [12,16],
-               15 : [13,19,17],
-               16 : [14,18,20],
-               17: [15,19],
-               18: [16, 20],
-               19: [15,17],
-               20: [16,18],
-               23: [11,25,24],
-               24: [23,26,12],
-               25: [23,27],
-               26:[24,28],
-               30: [28,32],
-               32: [28],
-               27: [29,31],
-               31: [29]
+               14 : [16],
+               15 : [17, 19],
+               16 : [18, 20],
+               17 : [19],
+               18 : [20],
+               19 : [],
+               20 : [],
+               21 : [],
+               22 : [],
+               23 : [24, 25],
+               24 : [26],
+               25 : [27],
+               26 : [28],
+               27 : [29, 31],
+               28 : [30, 32],
+               29 : [31],
+               30 : [32],
+               31 : [],
+               32 : [],
                }
 
 def convert_xy(x,y, screenX,screenY):
@@ -51,19 +55,16 @@ while running and cap.isOpened():
 
     drawn_connections = []
     for connection in connections:
+        if connection is []:
+            continue
         try:
             mark = result.pose_landmarks.landmark[connection]
-            mark = convert_xy(mark.x, mark.y,x,y)
+            mark = convert_xy(mark.x, mark.y, x, y)
             for end in connections[connection]:
-                drawn_connection = [connection, end]
-                drawn_connection.sort()
-                if drawn_connection in drawn_connections:
-                    continue
                 point = result.pose_landmarks.landmark[end]
-                point = convert_xy(point.x, point.y,x,y)
+                point = convert_xy(point.x, point.y, x, y)
                 base_image = cv2.line(base_image, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), shadow_color, shadow_thickness)
                 base_image = cv2.line(base_image, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), skeleton_color, skeleton_thickness)
-                drawn_connections.append(drawn_connection)
         except Exception as e:
             print(e)
             continue
