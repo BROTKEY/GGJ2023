@@ -1,8 +1,7 @@
 import yaml
 import numpy as np
 import mediapipe as mp
-
-# class GameEngine():
+import cv2
 
 class BodyEngine():
     def __init__(self):
@@ -10,33 +9,76 @@ class BodyEngine():
         self.landmark_names = {v: k for k, v in self.landmarks.items()}
         mp_pose = mp.solutions.pose
         self.pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
-        self.points = {}
-        for i in range(33):
-            self.points.setdefault(i, np.array((0,0)))
+        self.marks = {}
 
     def process_frame(self, frame):
         result = self.pose.process(frame)
-        for i in result.pose_landmarks.landmark:
-            self.points[i] = np.array((i.x, i.y))
+        if not result.pose_landmarks:
+            return
+        for n, i in enumerate(result.pose_landmarks.landmark):
+            self.marks[n] = np.array((i.x, i.y))
     
     @property
     def points(self):
-        return self.points
+        return self.marks
     
     def get_point_from_name(self, name):
-        return self.points[self.landmark_names[name]]
+        return self.marks[self.landmark_names[name]]
 
 class ShadowEngine():
-    def __init__(self, frame):
-        self.frame = frame
+    connections = {
+        11 : [12,13,23],
+        12 : [14, 24],
+        13 : [15],
+        14 : [16],
+        15 : [17, 19],
+        16 : [18, 20],
+        17 : [19],
+        18 : [20],
+        19 : [],
+        20 : [],
+        21 : [],
+        22 : [],
+        23 : [24, 25],
+        24 : [26],
+        25 : [27],
+        26 : [28],
+        27 : [29, 31],
+        28 : [30, 32],
+        29 : [31],
+        30 : [32],
+        31 : [],
+        32 : [],
+    }
+
+    def __init__(self, cap):
+        self.cap = cap
+        self.update()
 
     def loadConfig(self,path):
         self.poses = yaml.load(open(path, "r"), Loader=yaml.FullLoader)
         print(self.poses)
 
-    def drawPose(self, landmarks):
-        pass
+    def update(self):
+        _, frame = self.cap.read()
 
-if __name__ == "__main__":
-    x = ShadowEngine()
-    x.loadConfig("poses.yaml")
+        frame = cv2.flip(frame, 1)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        self.frame = frame
+
+    def drawPose(self, points, color:tuple, thicc:int):
+        shape = np.array((self.frame.shape[0], self.frame.shape[1]))
+        for point in points:
+            if point not in self.connections:
+               continue 
+            for endpoint in self.connections[point]:
+                if endpoint in points:
+                    start_point = points[point] * shape
+                    end_point = points[endpoint] * shape
+                    self.frame = cv2.line(self.frame, start_point.astype(int), end_point.astype(int), color, thicc)
+
+    def get_frame(self):
+        return self.frame
+    
+    def close(self):
+        self.cap.release()

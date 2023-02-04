@@ -1,14 +1,11 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+from engine import BodyEngine, ShadowEngine
 import yaml
-#from engine import BodyEngine
 
-cap = cv2.VideoCapture(0)
-
-# body = BodyEngine()
-
-mp_pose = mp.solutions.pose
+renderer = ShadowEngine(cv2.VideoCapture(0))
+body = BodyEngine()
 
 shadow_color = (100,100,100)
 shadow_thickness = 10
@@ -45,7 +42,7 @@ def get_angles(landmarks):
     return d
 
 
-pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
+#pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
 
 with open('landmarks.yaml', 'r') as f:
     landmarks = yaml.safe_load(f)
@@ -76,45 +73,20 @@ connections = {11 : [12,13,23],
                32 : [],
                }
 
-def convert_xy(x,y, screenX,screenY):
-    return ( np.array((x,y)) * ( np.array((screenX,screenY)) ) )
+def convert_xy(point, screenX,screenY):
+    conv = point * np.array((screenX,screenY))
+    return conv.astype(int)
 
 # Run the game loop
 running = True
-while running and cap.isOpened():
-    _, frame = cap.read()
-    frame = cv2.flip(frame, 1)
-    #base_image = np.ones([720,1280,3])
-    base_image = frame
+while running:
+    renderer.update()
+    body.process_frame(renderer.get_frame())
+    renderer.drawPose(body.points, (0,0,0), 5)
 
-    RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    result = pose.process(RGB)
-    y,x,_ = base_image.shape
-
-    one = [0,0]
-    two = [0,0]
-    three = [0,0]
-    four = [0,0]
-    
-    drawn_connections = []
-    for connection in connections:
-        if connection is []:
-            continue
-        try:
-            mark = result.pose_landmarks.landmark[connection]
-                
-            mark = convert_xy(mark.x, mark.y, x, y)
-            for end in connections[connection]:
-                point = result.pose_landmarks.landmark[end]
-                point = convert_xy(point.x, point.y, x, y)
-                base_image = cv2.line(base_image, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), shadow_color, shadow_thickness)
-                base_image = cv2.line(base_image, (int(mark[0]), int(mark[1])), (int(point[0]), int(point[1])), skeleton_color, skeleton_thickness)
-        except Exception as e:
-            print(e)
-            continue
-
-    cv2.imshow("dhjsdahdsl", base_image)
+    cv2.imshow("\"Game\"", renderer.get_frame())
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-cap.release()
+
+renderer.close()
 cv2.destroyAllWindows()
