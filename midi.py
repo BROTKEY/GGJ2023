@@ -45,12 +45,16 @@ class MidiPlayer:
                 if isinstance(msg, MetaMessage):
                     continue
                 else:
-                    if self.accuracy < 0.9 and msg.type == 'note_on':
-                        # print(msg.note)
-                        x = random.rand()
-                        if (x > self.accuracy):
-                            msg.note += random.randint(-1, 2)
+                    if msg.type == 'note_on':
+                        old_note = msg.note
+                        if self.accuracy < 0.9:
+                            x = random.rand()
+                            if (x > self.accuracy):
+                                msg.note += random.randint(-1, 2)
                     self.output.send(msg)
+                    if msg.type == 'note_on':
+                        # reset to original note
+                        msg.note = old_note
 
 
 if __name__ == '__main__':
