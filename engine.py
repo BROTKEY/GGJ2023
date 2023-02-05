@@ -169,8 +169,8 @@ class PosesEngine():
                 body.append(landmarks[key])
             center = np.mean(np.array(body), 0)
 
-            if np.linalg.norm(center - self.last_center) > 0.1:
-                return False
+            # if np.linalg.norm(center - self.last_center) > 0.1:
+            #     return False
 
             valid = True
             testing_pose = self.conf[self.last_pose_number].items()
