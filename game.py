@@ -6,6 +6,7 @@ from engine import BodyEngine, GameEngine, PosesEngine, Camera
 from engine import BodyEngine, GameEngine, PosesEngine, ActionQueue
 from datetime import datetime
 import time
+import random, yaml
 
 background = cv2.imread("./img/background.png")
 cam = Camera()
@@ -18,7 +19,8 @@ shadow_color = (100,100,100)
 shadow_thickness = 10
 skeleton_color = (0,0,0)
 skeleton_thickness = 4
-pose_number = 1
+poses_avail = list(yaml.load(open("poses.yaml","r"), Loader=yaml.FullLoader).keys())
+pose_number = random.choice(poses_avail)
 new_pose = {}
 score=0
 valid_time = 0
@@ -76,7 +78,8 @@ while running:
     y,x,_ = renderer.get_frame().shape
     valid = False
     if queue.getFirstFromQueue() == 0:
-        new_pose = shadow.calculatePose([y/2,x/2], x,y, pose_number)
+        new_pose = shadow.calculatePose([y/2,x/2], x,y, random.choice(poses_avail))
+        print(new_pose)
         queue.addToQueue(1)
         queue.forwardQueue()
     elif queue.getFirstFromQueue() == 1:
@@ -97,7 +100,7 @@ while running:
                 valid_time -= 150 * timedelta
         last_time = now
     elif queue.getFirstFromQueue() == 2:
-        pose_number = randint(1,5)
+        pose_number = random.choice(poses_avail)
         queue.addToQueue(0)
         queue.forwardQueue()
     elif queue.getFirstFromQueue() == 3:
@@ -109,6 +112,7 @@ while running:
 
     cv2.imshow("\"Game\"", renderer.get_frame())
     if cv2.waitKey(1) & 0xFF == ord('q'):
+        print(shadow.get_angles(body.points, deg=True))
         break
 
 cam.close()

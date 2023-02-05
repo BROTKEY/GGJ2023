@@ -81,11 +81,11 @@ class Camera():
         _, frame = self.cap.read()
         frame = cv2.flip(frame, 1)
         return frame
-    
+
     @property
     def shape(self):
         return self.shapevar
-    
+
     def close(self):
         self.cap.release()
 
@@ -95,7 +95,7 @@ class PosesEngine():
 
     def calculateBodyPos(self, angle, center, point):
         return (np.array([[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]]) @ (point - center)) + center
-        
+
     def calculateBody(self, center, shoulder_dist, upper_body_dist, hip_dist, angle):
         left_shoulder = self.calculateBodyPos(angle, center, center + np.array([shoulder_dist/2, upper_body_dist/2]))
         left_hip = self.calculateBodyPos(angle, center, center + np.array([hip_dist/2, -upper_body_dist/2]))
@@ -133,8 +133,8 @@ class PosesEngine():
         "lower_leg_r" : [26, 28],
         "body": [23, 11 , 24, 12],
         })
-    
-    def get_angles(self, landmarks):
+
+    def get_angles(self, landmarks, deg=False):
         d = dict()
         for key in self.body_bones:
             bone = self.body_bones[key]
@@ -146,8 +146,10 @@ class PosesEngine():
                 stop =  landmarks[bone[1]]
             dr = stop - start
             d[key] = np.arctan2(dr[0], dr[1])
+        if deg:
+            d = {k : d[k]*180/np.pi for k in d}
         return d
-    
+
     def checkPose(self, landmarks):
         if not landmarks:
             return False
@@ -162,28 +164,28 @@ class PosesEngine():
 
             if np.linalg.norm(center - self.last_center) > 0.1:
                 return False
-            
+
             valid = True
             testing_pose = self.conf[self.last_pose_number].items()
             for key, value in testing_pose:
-                if key == "shoulder_dist": 
+                if key == "shoulder_dist":
                     continue
                 if not valid:
                     return valid
                 anglediff = (angles[key] - value + math.pi + math.pi*2) % (math.pi*2) - math.pi
                 valid = (anglediff <= 0.3 and anglediff >= -0.3)
                 valid = valid
-                    
+
             return valid
         return False
 
     def invertAngle(self, angle):
         return (angle + math.pi) % (2 * math.pi)
 
-    
+
     def calculatePose(self, center, screenSizeX,screenSizeY, pose_number):
         center = np.array(center)/ np.array([screenSizeY, screenSizeX])
-        
+
         shoulder_dist = float(self.conf[pose_number]["shoulder_dist"])
         upper_body_dist = shoulder_dist * 1.8
         hip_dist = shoulder_dist * 0.8
@@ -203,7 +205,7 @@ class PosesEngine():
         self.last_shoulder_dist = shoulder_dist
         self.last_pose_number = pose_number
         self.last_center = center
-        
+
 
         return self.toCoords(body, elbow_l, elbow_r, wrist_l, wrist_r, knee_l, knee_r, ankle_l, ankle_r)
 
@@ -228,7 +230,7 @@ class BodyEngine():
 
     def get_point_from_name(self, name):
         return self.marks[self.landmark_names[name]]
-    
+
 class ConfigLoader:
     def __init__(self):
         raw = yaml.safe_load(open("./poses.yaml","r"))
@@ -253,9 +255,6 @@ class ActionQueue:
 
     def getQueue(self):
         return self.queue
-    
+
     def forwardQueue(self):
         self.queue.pop(0)
-
-
-        
