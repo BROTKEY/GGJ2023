@@ -78,7 +78,7 @@ while running:
     y,x,_ = renderer.get_frame().shape
     valid = False
     if queue.getFirstFromQueue() == 0:
-        new_pose = shadow.calculatePose([y-50,0 + 200], x,y, random.choice(poses_avail))
+        new_pose = shadow.calculatePose([3*y/4 , x/4], x,y, random.choice(poses_avail))
         print(new_pose)
         queue.addToQueue(1)
         queue.forwardQueue()
