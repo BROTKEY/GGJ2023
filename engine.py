@@ -240,7 +240,7 @@ class ConfigLoader:
 
 class ActionQueue:
     def __init__(self):
-        self.actions ={0: "new_pose", 1: "check_valid", 2: "gen_new_number", 3: "wait_for_event", 4:"lose"}
+        self.actions ={0: "new_pose", 1: "check_valid", 3: "wait_for_event", 4:"lose"}
         self.queue = [0]
 
     def addToQueue(self,action):

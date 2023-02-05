@@ -19,7 +19,6 @@ shadow_thickness = 10
 skeleton_color = (0,0,0)
 skeleton_thickness = 4
 poses_avail = list(yaml.load(open("poses.yaml","r"), Loader=yaml.FullLoader).keys())
-pose_number = random.choice(poses_avail)
 new_pose = {}
 score=0
 valid_time = 0
@@ -38,7 +37,6 @@ while running:
     valid = False
     if queue.getFirstFromQueue() == 0:
         new_pose = shadow.calculatePose([y/2,x/2], x,y, random.choice(poses_avail))
-        print(new_pose)
         queue.addToQueue(1)
         queue.forwardQueue()
     elif queue.getFirstFromQueue() == 1:
@@ -54,7 +52,7 @@ while running:
             if valid_time > 255:
                 valid_time = 0
                 score += 1
-                queue.addToQueue(2)
+                queue.addToQueue(0)
                 queue.forwardQueue()
         else:
             if valid_time < 0:
@@ -63,10 +61,6 @@ while running:
                 valid_time -= 150 * timedelta
         last_time = now
         cool_down = now
-    elif queue.getFirstFromQueue() == 2:
-        pose_number = random.choice(poses_avail)
-        queue.addToQueue(0)
-        queue.forwardQueue()
     elif queue.getFirstFromQueue() == 3:
         pass
     elif queue.getFirstFromQueue() == 4:
