@@ -14,7 +14,7 @@ class MidiPlayer:
     
     def set_accuracy(self, acc):
         self.accuracy = acc / 100
-        print(f'received acc = {acc}')
+        # print(f'received acc = {acc}')
 
     def stop(self):
         self.should_stop = True
