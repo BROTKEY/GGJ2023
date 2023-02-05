@@ -6,7 +6,7 @@ from engine import BodyEngine, GameEngine, PosesEngine, Camera
 from engine import BodyEngine, GameEngine, PosesEngine, ActionQueue
 from datetime import datetime
 
-background = cv2.imread("debugger.jpeg")
+background = cv2.imread("./img/background.png")
 cam = Camera()
 renderer = GameEngine((1280,720), background, cam.shape)
 body = BodyEngine()
@@ -23,7 +23,6 @@ score=0
 valid_time = 0
 
 last_time = datetime.now()
-duck = cv2.imread("debugger_transparent.png", cv2.IMREAD_UNCHANGED)
 
 # Run the game loop
 running = True
@@ -31,14 +30,11 @@ while running:
     renderer.update()
     camframe = cam.frame
     body.process_frame(camframe)
-    # renderer.frame = cv2.line(renderer.frame, (0,0), (1000000,1000000), (255,255,255), 10000)
-    # renderer.drawImage(duck, (320,230), (128,128))
-    # renderer.drawImage(camframe, (160,0), (960, 720))
     renderer.drawPose(body.points, (0,0,0), 5)
-    # y,x,_ = renderer.get_frame().shape
+    y,x,_ = renderer.get_frame().shape
     valid = False
     if queue.getFirstFromQueue() == 0:
-        new_pose = shadow.calculatePose([200,300], x,y, pose_number)
+        new_pose = shadow.calculatePose([y/2,x/2], x,y, pose_number)
         queue.addToQueue(1)
         queue.forwardQueue()
     elif queue.getFirstFromQueue() == 1:
@@ -59,7 +55,7 @@ while running:
                 valid_time -= 150 * timedelta
         last_time = now
     elif queue.getFirstFromQueue() == 2:
-        pose_number = randint(1,4)
+        pose_number = randint(1,5)
         queue.addToQueue(0)
         queue.forwardQueue()
     elif queue.getFirstFromQueue() == 3:

@@ -149,7 +149,7 @@ class PosesEngine():
         if not landmarks:
             return False
         magnitude = np.linalg.norm(landmarks[11] - landmarks[12])
-        if self.last_shoulder_dist - 0.2 <= magnitude <= self.last_shoulder_dist + 0.2:
+        if self.last_shoulder_dist - 0.1 <= magnitude <= self.last_shoulder_dist + 0.1:
             angles = self.get_angles(landmarks)
 
             body = []
@@ -188,8 +188,8 @@ class PosesEngine():
 
         body = self.calculateBody(center, shoulder_dist, upper_body_dist, hip_dist, float(self.conf[pose_number]["body"]))
 
-        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.6, self.invertAngle(float(self.conf[pose_number]["upper_arm_l"])))
-        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.6, self.invertAngle(float(self.conf[pose_number]["upper_arm_r"])))
+        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_l"])))
+        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_r"])))
         wrist_r = self.calculatePartFromAngle(elbow_r, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_l"]))
         wrist_l = self.calculatePartFromAngle(elbow_l, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_r"]))
 
