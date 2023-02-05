@@ -59,7 +59,11 @@ class GameEngine():
         if 0 in points:
             point = points[0] * self.shape + self.pose_offset/2
             magnitude = np.linalg.norm(points[11] - points[12])
-            self.frame = cv2.circle(self.frame, point.astype(int), int(magnitude*300), color, thicc)
+            face = cv2.imread("./img/face0.jpeg")
+            size = np.array((int(magnitude*300),int(magnitude*300)))
+            x,y = point.astype(int) - size/2
+
+            self.drawImage(face, (int(x), int(y)), size)
 
     def drawImage(self, image, xy, size):
         img = cv2.resize(image, size)
