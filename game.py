@@ -3,6 +3,7 @@ import mediapipe as mp
 import numpy as np
 from random import randint
 from engine import BodyEngine, GameEngine, PosesEngine, ActionQueue
+from datetime import datetime
 
 renderer = GameEngine(cv2.VideoCapture(0))
 body = BodyEngine()
@@ -15,6 +16,8 @@ skeleton_color = (0,0,0)
 skeleton_thickness = 4
 pose_number = 1
 new_pose = {}
+score=0
+valid_time = 0
 
 # Run the game loop
 running = True
@@ -31,8 +34,12 @@ while running:
     elif queue.getFirstFromQueue() == 1:
         valid = shadow.checkPose(body.points)
         if valid:
-            queue.addToQueue(2)
-            queue.forwardQueue()
+            valid_time += 1
+            if valid_time > 255:
+                valid_time = 0
+                score += 1
+                queue.addToQueue(2)
+                queue.forwardQueue()
     elif queue.getFirstFromQueue() == 2:
         pose_number = randint(1,4)
         queue.addToQueue(0)
@@ -40,7 +47,7 @@ while running:
     elif queue.getFirstFromQueue() == 3:
         pass
 
-    color = (0,255,0) if valid else (0,0,255)
+    color = (0,valid_time,0) if valid else (0,0,255)
     renderer.drawPose(new_pose,color,20)
 
 

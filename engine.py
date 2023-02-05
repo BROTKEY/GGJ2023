@@ -125,8 +125,10 @@ class PosesEngine():
     
     def checkPose(self, landmarks):
         magnitude = np.linalg.norm(landmarks[11] - landmarks[12])
-        if self.last_shoulder_dist - 0.4 <= magnitude <= self.last_shoulder_dist + 0.4:
+        if self.last_shoulder_dist - 0.2 <= magnitude <= self.last_shoulder_dist + 0.2:
             angles = self.get_angles(landmarks)
+
+            center = np.mean()
 
             valid = True
             testing_pose = self.conf[self.last_pose_number].items()
