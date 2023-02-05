@@ -65,12 +65,6 @@ if startscreen:
             running = False
             break
 
-    # 3 Second blackscreen
-    renderer.update()
-    renderer.drawImage(black, (0,0), (renderer.frame.shape[1], renderer.frame.shape[0]))
-    cv2.imshow("\"Game\"", renderer.get_frame())
-    cv2.waitKey(1)
-    time.sleep(3)
 
 # Run the game loop
 while running:
