@@ -44,7 +44,6 @@ if startscreen:
         y,x,_ = renderer.get_frame().shape
         target_pose = shadow.calculatePose([y/2,x/2], x,y, 0)
         valid, acc = shadow.checkPose(body.points)
-        print(acc)
         now = datetime.now()
         timedelta = (now - last_time).total_seconds()
         renderer.drawText("T-Pose to start", (508,64), 1)
@@ -85,7 +84,6 @@ while running:
         queue.forwardQueue()
     elif queue.getFirstFromQueue() == 1:
         valid, acc = shadow.checkPose(body.points)
-        print(acc)
         now = datetime.now()
         timedelta = (now - last_time).total_seconds()
         if valid:
