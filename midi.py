@@ -46,7 +46,7 @@ class MidiPlayer:
                     continue
                 else:
                     if self.accuracy < 0.9 and msg.type == 'note_on':
-                        print(msg.note)
+                        # print(msg.note)
                         x = random.rand()
                         if (x > self.accuracy):
                             msg.note += random.randint(-1, 2)
