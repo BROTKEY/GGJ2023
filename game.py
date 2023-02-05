@@ -93,7 +93,7 @@ while running:
             if valid_time > 255:
                 valid_time = 0
                 score += 1
-                queue.addToQueue(2)
+                queue.addToQueue(0)
                 queue.forwardQueue()
         else:
             if valid_time < 0:
