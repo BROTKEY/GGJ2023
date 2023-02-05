@@ -97,7 +97,7 @@ while running:
             if valid_time < 0:
                 valid_time = 0
             else:
-                valid_time -= 150 * timedelta
+                valid_time -= 25 * timedelta
         last_time = now
     elif queue.getFirstFromQueue() == 2:
         pose_number = random.choice(poses_avail)
