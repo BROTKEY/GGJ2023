@@ -17,10 +17,6 @@ queue = ActionQueue()
 
 startscreen = False
 
-shadow_color = (100,100,100)
-shadow_thickness = 10
-skeleton_color = (0,0,0)
-skeleton_thickness = 4
 poses_avail = list(yaml.load(open("poses.yaml","r"), Loader=yaml.FullLoader).keys())
 new_pose = {}
 score=0
@@ -73,7 +69,7 @@ while running:
     body.process_frame(camframe)
     if camera_enabled: renderer.drawImage(camframe, (int((renderer.shape[0]-cam.shape[0]*renderer.ratio)/1.5),0), (np.array((cam.shape[1], cam.shape[0]))*renderer.ratio).astype(int))
     renderer.drawPose(body.points, (0,0,0), 5)
-    renderer.drawText("Score: {}".format(score), (16,32), 1)
+    # renderer.drawText("Score: {}".format(score), (16,32), 1)
     y,x,_ = renderer.get_frame().shape
     valid = False
 
