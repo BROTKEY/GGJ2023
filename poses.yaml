@@ -53,3 +53,36 @@
   upper_leg_r: 0
   body: 180
   shoulder_dist: 0.15
+dog:
+  lower_arm_l: -14.958027814025343
+  lower_arm_r: -7.919292041311081
+  upper_arm_l: -11.674108701673601
+  upper_arm_r: 4.3455591075135995
+  upper_leg_l: 10.011985092695005
+  upper_leg_r: -1.1229368036510137
+  lower_leg_l: 120.68903300383401
+  lower_leg_r: 64.8436568776314
+  body: -34.82126189782945
+  shoulder_dist: 0.15
+tree:
+  lower_arm_l : -159.28040303694323
+  lower_arm_r : 159.09928213570902
+  upper_arm_l : 174.1812230201589
+  upper_arm_r : -174.4766845308749
+  upper_leg_l : 41.99165577816164
+  upper_leg_r : 4.63388826409376
+  lower_leg_l : -88.66147803566109
+  lower_leg_r : 2.9957748548935803
+  body : -179.2809683425172
+  shoulder_dist: 0.15
+warrior:
+  lower_arm_l : 84.81184389594303
+  lower_arm_r : -83.44029034749674
+  upper_arm_l : 68.05469162502898
+  upper_arm_r : -64.27419312086452
+  upper_leg_l : 60.08696824201375
+  upper_leg_r : -25.21970651992963
+  lower_leg_l : -8.762065547324843
+  lower_leg_r : -52.873566444726755
+  body : 177.84975866213725
+  shoulder_dist: 0.15
