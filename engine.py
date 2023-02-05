@@ -79,7 +79,7 @@ class PosesEngine():
         return (left_hip, left_shoulder, right_hip, right_shoulder)
 
     def calculatePartFromAngle(self, origin, shoulder_dist, ratio, angle):
-        return [origin[0] + np.sin(angle/2) * shoulder_dist, origin[1] + np.cos(angle/2)*(shoulder_dist*ratio)]
+        return [origin[0] + np.sin(angle) * shoulder_dist, origin[1] + np.cos(angle)*(shoulder_dist*ratio)]
 
     def toCoords(self, body, elbow_l, elbow_r, wrist_l, wrist_r, knee_l, knee_r, ankle_l, ankle_r):
         return {
@@ -129,12 +129,15 @@ class PosesEngine():
             angles = self.get_angles(landmarks)
 
             valid = True
-            for key, value in self.conf[self.last_pose_number].items():
+            testing_pose = self.conf[self.last_pose_number].items()
+            for key, value in testing_pose:
                 if key == "shoulder_dist": 
                     continue
                 if not valid:
                     return valid
-                valid = (value - 0.8 + math.pi <= (-1* angles[key]) + math.pi <= value + 0.8 + math.pi)
+                anglediff = (angles[key] - value + math.pi + math.pi*2) % (math.pi*2) - math.pi
+                valid = (anglediff <= 0.1 and anglediff >= -0.1)
+                valid = valid
                     
             return valid
         return False
@@ -149,7 +152,7 @@ class PosesEngine():
 
         body = self.calculateBody(center, shoulder_dist, upper_body_dist, hip_dist, float(self.conf[pose_number]["body"]))
 
-        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.6, float(self.conf[pose_number]["upper_arm_l"]))
+        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.6, -1*float(self.conf[pose_number]["upper_arm_l"]))
         elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.6, float(self.conf[pose_number]["upper_arm_r"]))
         wrist_l = self.calculatePartFromAngle(elbow_l, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_l"]))
         wrist_r = self.calculatePartFromAngle(elbow_r, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_r"]))
