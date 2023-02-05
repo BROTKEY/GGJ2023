@@ -65,15 +65,15 @@
   body: 180
   shoulder_dist: 0.15
 dog:
-  lower_arm_l: -14.958027814025343
-  lower_arm_r: -7.919292041311081
-  upper_arm_l: -11.674108701673601
-  upper_arm_r: 4.3455591075135995
-  upper_leg_l: 10.011985092695005
-  upper_leg_r: -1.1229368036510137
-  lower_leg_l: 120.68903300383401
-  lower_leg_r: 64.8436568776314
-  body: -34.82126189782945
+  lower_arm_l : 16.83279305449073
+  lower_arm_r : 16.261738732179023
+  upper_arm_l : 13.580202351380246
+  upper_arm_r : 11.246486109289451
+  upper_leg_l : -7.352114106934458
+  upper_leg_r : -6.377314733406033
+  lower_leg_l : -24.435780113052584
+  lower_leg_r : -24.393941797402544
+  body : 43.79628747426414
   shoulder_dist: 0.15
 tree:
   lower_arm_l : -159.28040303694323
