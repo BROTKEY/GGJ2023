@@ -1,3 +1,14 @@
+0: # T Pose to start
+  lower_arm_l: 90
+  upper_arm_l: 90
+  lower_arm_r: -90
+  upper_arm_r: -90
+  lower_leg_l: 0
+  upper_leg_l: 0
+  lower_leg_r: 0
+  upper_leg_r: 0
+  body: 180
+  shoulder_dist: 0.20
 1:
   lower_arm_l: 180
   upper_arm_l: 90
