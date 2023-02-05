@@ -17,12 +17,8 @@ shadow = PosesEngine()
 queue = ActionQueue()
 success_wav = sa.WaveObject.from_wave_file("success.wav")
 
-startscreee = False
+startscreen = False
 
-shadow_color = (100,100,100)
-shadow_thickness = 10
-skeleton_color = (0,0,0)
-skeleton_thickness = 4
 poses_avail = list(yaml.load(open("poses.yaml","r"), Loader=yaml.FullLoader).keys())
 new_pose = {}
 valid_time = 0
@@ -45,7 +41,6 @@ if startscreen:
         y,x,_ = renderer.get_frame().shape
         target_pose = shadow.calculatePose([y/2,x/2], x,y, 0)
         valid, acc = shadow.checkPose(body.points)
-        print(acc)
         now = datetime.now()
         timedelta = (now - last_time).total_seconds()
         renderer.drawText("T-Pose to start", (508,64), 1)
@@ -85,7 +80,6 @@ while running:
         queue.forwardQueue()
     elif queue.getFirstFromQueue() == 1:
         valid, acc = shadow.checkPose(body.points)
-        print(acc)
         now = datetime.now()
         timedelta = (now - last_time).total_seconds()
         if valid:
