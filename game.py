@@ -19,7 +19,8 @@ shadow = PosesEngine()
 queue = ActionQueue()
 success_wav = sa.WaveObject.from_wave_file("success.wav")
 midi_player = MidiPlayer("./mid/rag.mid")
-Thread(target=midi_player.run)
+midi_thread = Thread(target=midi_player.run)
+midi_thread.start()
 
 startscreen = False
 
