@@ -107,7 +107,7 @@ while running:
         pass
 
     color = (0,255,255-valid_time) if valid else (0,128,255-valid_time)
-    renderer.drawPose(new_pose,color,20)
+    renderer.drawPose(new_pose,color,10)
 
 
     cv2.imshow("\"Game\"", renderer.get_frame())

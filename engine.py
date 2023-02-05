@@ -46,6 +46,7 @@ class GameEngine():
         self.frame = cv2.line(self.frame, xy1, xy2, color, thicc)
 
     def drawPose(self, points, color:tuple, thicc:int):
+        thiccc = thicc+10
         shape = np.array((self.frame.shape[1], self.frame.shape[0]))
         for point in points:
             if point not in self.connections:
@@ -54,7 +55,7 @@ class GameEngine():
                 if endpoint in points:
                     start_point = points[point] * self.shape + self.pose_offset/2
                     end_point = points[endpoint] * self.shape + self.pose_offset/2
-                    self.frame = cv2.line(self.frame, start_point.astype(int), end_point.astype(int), color, thicc)
+                    self.frame = cv2.line(self.frame, start_point.astype(int), end_point.astype(int), color, thiccc if endpoint in range(25,29) or (point==23 and endpoint==24) else thicc)
         if 0 in points:
             point = points[0] * self.shape + self.pose_offset/2
             magnitude = np.linalg.norm(points[11] - points[12])
