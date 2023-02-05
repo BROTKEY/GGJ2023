@@ -13,7 +13,7 @@ class MidiPlayer:
         self.output = mido.open_output()
     
     def set_accuracy(self, acc):
-        self.accuracy = acc
+        self.accuracy = acc / 100
         print(f'received acc = {acc}')
 
     def stop(self):
