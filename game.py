@@ -23,6 +23,7 @@ score=0
 valid_time = 0
 
 last_time = datetime.now()
+cool_down = datetime.now()
 
 # Run the game loop
 running = True
@@ -41,6 +42,10 @@ while running:
         valid = shadow.checkPose(body.points)
         now = datetime.now()
         timedelta = (now - last_time).total_seconds()
+        cooldowntimedelta = (now - cool_down).total_seconds()
+        if cooldowntimedelta < 3 and valid:
+            queue.addToQueue(4)
+            queue.forwardQueue()
         if valid:
             valid_time += 100 * timedelta
             if valid_time > 255:
@@ -54,15 +59,20 @@ while running:
             else:
                 valid_time -= 150 * timedelta
         last_time = now
+        cool_down = now
     elif queue.getFirstFromQueue() == 2:
         pose_number = randint(1,5)
         queue.addToQueue(0)
         queue.forwardQueue()
     elif queue.getFirstFromQueue() == 3:
         pass
+    elif queue.getFirstFromQueue() == 4:
+        pass
 
-    color = (0,255,255-valid_time) if valid else (0,128,255-valid_time)
-    renderer.drawPose(new_pose,color,20)
+
+    if queue.getFirstFromQueue() != 4:
+        color = (0,255,255-valid_time) if valid else (0,128,255-valid_time)
+        renderer.drawPose(new_pose,color,20)
 
 
     cv2.imshow("\"Game\"", renderer.get_frame())

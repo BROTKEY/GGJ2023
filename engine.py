@@ -149,14 +149,13 @@ class PosesEngine():
         if not landmarks:
             return False
         magnitude = np.linalg.norm(landmarks[11] - landmarks[12])
-        if self.last_shoulder_dist - 0.1 <= magnitude <= self.last_shoulder_dist + 0.1:
+        if self.last_shoulder_dist - 0.05 <= magnitude <= self.last_shoulder_dist + 0.05:
             angles = self.get_angles(landmarks)
 
             body = []
             for key in self.body_bones["body"]:
                 body.append(landmarks[key])
-            center = np.mean(np.array(body), 0)
-            print(center)    
+            center = np.mean(np.array(body), 0)   
 
             if np.linalg.norm(center - self.last_center) > 0.1:
                 return False
@@ -183,20 +182,20 @@ class PosesEngine():
         center = np.array(center)/ np.array([screenSizeY, screenSizeX])
         
         shoulder_dist = float(self.conf[pose_number]["shoulder_dist"])
-        upper_body_dist = shoulder_dist * 1.8
+        upper_body_dist = shoulder_dist * 2
         hip_dist = shoulder_dist * 0.8
 
         body = self.calculateBody(center, shoulder_dist, upper_body_dist, hip_dist, float(self.conf[pose_number]["body"]))
 
-        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_l"])))
-        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_r"])))
+        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.4, self.invertAngle(float(self.conf[pose_number]["upper_arm_l"])))
+        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.4, self.invertAngle(float(self.conf[pose_number]["upper_arm_r"])))
         wrist_r = self.calculatePartFromAngle(elbow_r, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_l"]))
         wrist_l = self.calculatePartFromAngle(elbow_l, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_r"]))
 
-        knee_l = self.calculatePartFromAngle(body[0], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_l"]))
-        knee_r = self.calculatePartFromAngle(body[2], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_r"]))
-        ankle_l = self.calculatePartFromAngle(knee_l, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_l"]))
-        ankle_r = self.calculatePartFromAngle(knee_r, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_r"]))
+        knee_l = self.calculatePartFromAngle(body[0], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_r"]))
+        knee_r = self.calculatePartFromAngle(body[2], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_l"]))
+        ankle_l = self.calculatePartFromAngle(knee_l, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_r"]))
+        ankle_r = self.calculatePartFromAngle(knee_r, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_l"]))
 
         self.last_shoulder_dist = shoulder_dist
         self.last_pose_number = pose_number
@@ -239,7 +238,7 @@ class ConfigLoader:
 
 class ActionQueue:
     def __init__(self):
-        self.actions ={0: "new_pose", 1: "check_valid", 2: "gen_new_number", 3: "wait_for_event"}
+        self.actions ={0: "new_pose", 1: "check_valid", 2: "gen_new_number", 3: "wait_for_event", 4:"lose"}
         self.queue = [0]
 
     def addToQueue(self,action):

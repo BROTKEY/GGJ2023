@@ -4,7 +4,7 @@
   lower_arm_r: 180
   upper_arm_r: -90
   lower_leg_l: 0
-  upper_leg_l: 0
+  upper_leg_l: 45
   lower_leg_r: 0
   upper_leg_r: 0
   body: 180
