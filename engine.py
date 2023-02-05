@@ -128,7 +128,7 @@ class PosesEngine():
         if self.last_shoulder_dist - 0.2 <= magnitude <= self.last_shoulder_dist + 0.2:
             angles = self.get_angles(landmarks)
 
-            center = np.mean()
+            # center = np.mean()
 
             valid = True
             testing_pose = self.conf[self.last_pose_number].items()
