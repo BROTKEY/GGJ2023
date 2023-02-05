@@ -8,6 +8,8 @@ from datetime import datetime
 import time
 import random, yaml
 import simpleaudio as sa
+from midi import MidiPlayer
+from threading import Thread
 
 background = cv2.imread("./img/background.png")
 cam = Camera()
@@ -16,6 +18,8 @@ body = BodyEngine()
 shadow = PosesEngine()
 queue = ActionQueue()
 success_wav = sa.WaveObject.from_wave_file("success.wav")
+midi_player = MidiPlayer("./mid/rag.mid")
+Thread(target=midi_player.run)
 
 startscreen = False
 
@@ -75,11 +79,11 @@ while running:
 
     if queue.getFirstFromQueue() == 0:
         new_pose = shadow.calculatePose([3*y/4 , x/4], x,y, random.choice(poses_avail))
-        print(new_pose)
         queue.addToQueue(1)
         queue.forwardQueue()
     elif queue.getFirstFromQueue() == 1:
         valid, acc = shadow.checkPose(body.points)
+        midi_player.set_accuracy(acc=acc)
         now = datetime.now()
         timedelta = (now - last_time).total_seconds()
         if valid:
