@@ -25,6 +25,8 @@ class MidiPlayer:
             input_time = 0.0
 
             for msg in self.midi:
+                if self.should_stop:
+                    return
                 input_time += msg.time
 
                 playback_time = time.time() - start_time
