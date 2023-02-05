@@ -188,23 +188,27 @@ class PosesEngine():
     def calculatePose(self, center, screenSizeX,screenSizeY, pose_number):
         center = np.array(center)/ np.array([screenSizeY, screenSizeX])
 
-        shoulder_dist = float(self.conf[pose_number]["shoulder_dist"])
+        # shoulder_dist = float(self.conf[pose_number]["shoulder_dist"])
+        try:
+            shoulder_dist = float(self.conf[pose_number]["shoulder_dist"])
+        except:
+            shoulder_dist = 0.1
         upper_body_dist = shoulder_dist * 1.8
         hip_dist = shoulder_dist * 0.8
 
         body = self.calculateBody(center, shoulder_dist, upper_body_dist, hip_dist, float(self.conf[pose_number]["body"]))
 
-        # elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_l"])))
-        # elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_r"])))
-        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, float(self.conf[pose_number]["upper_arm_l"]))
-        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, float(self.conf[pose_number]["upper_arm_r"]))
+        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_r"])))
+        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_l"])))
+        # elbow_l = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, float(self.conf[pose_number]["upper_arm_l"]))
+        # elbow_r = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, float(self.conf[pose_number]["upper_arm_r"]))
         wrist_r = self.calculatePartFromAngle(elbow_r, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_l"]))
         wrist_l = self.calculatePartFromAngle(elbow_l, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_r"]))
 
-        knee_l = self.calculatePartFromAngle(body[0], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_l"]))
-        knee_r = self.calculatePartFromAngle(body[2], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_r"]))
-        ankle_l = self.calculatePartFromAngle(knee_l, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_l"]))
-        ankle_r = self.calculatePartFromAngle(knee_r, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_r"]))
+        knee_l = self.calculatePartFromAngle(body[0], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_r"]))
+        knee_r = self.calculatePartFromAngle(body[2], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_l"]))
+        ankle_l = self.calculatePartFromAngle(knee_l, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_r"]))
+        ankle_r = self.calculatePartFromAngle(knee_r, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_l"]))
 
         self.last_shoulder_dist = shoulder_dist
         self.last_pose_number = pose_number
