@@ -94,7 +94,7 @@ class PosesEngine():
         self.conf = (ConfigLoader()).conf
 
     def calculateBodyPos(self, angle, center, point):
-        return (np.array([[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]]) @ (point - center)) + center
+        return (np.array([[np.cos(angle), np.sin(angle)],[-np.sin(angle), np.cos(angle)]]) @ (point - center)) + center
 
     def calculateBody(self, center, shoulder_dist, upper_body_dist, hip_dist, angle):
         left_shoulder = self.calculateBodyPos(angle, center, center + np.array([shoulder_dist/2, upper_body_dist/2]))
@@ -192,8 +192,10 @@ class PosesEngine():
 
         body = self.calculateBody(center, shoulder_dist, upper_body_dist, hip_dist, float(self.conf[pose_number]["body"]))
 
-        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_l"])))
-        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_r"])))
+        # elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_l"])))
+        # elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_r"])))
+        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, float(self.conf[pose_number]["upper_arm_l"]))
+        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, float(self.conf[pose_number]["upper_arm_r"]))
         wrist_r = self.calculatePartFromAngle(elbow_r, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_l"]))
         wrist_l = self.calculatePartFromAngle(elbow_l, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_r"]))
 
