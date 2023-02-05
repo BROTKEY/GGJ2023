@@ -110,7 +110,7 @@ while running:
     cv2.imshow("\"Game\"", renderer.get_frame())
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
-        print(shadow.get_angles(body.points, deg=True))
+        midi_player.stop()
         break
     elif key == ord("c"):
         camera_enabled = not camera_enabled
