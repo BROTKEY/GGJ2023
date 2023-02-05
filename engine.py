@@ -124,6 +124,8 @@ class PosesEngine():
         return d
     
     def checkPose(self, landmarks):
+        if not landmarks:
+            return False
         magnitude = np.linalg.norm(landmarks[11] - landmarks[12])
         if self.last_shoulder_dist - 0.2 <= magnitude <= self.last_shoulder_dist + 0.2:
             angles = self.get_angles(landmarks)
