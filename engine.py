@@ -130,8 +130,15 @@ class PosesEngine():
         if self.last_shoulder_dist - 0.2 <= magnitude <= self.last_shoulder_dist + 0.2:
             angles = self.get_angles(landmarks)
 
-            # center = np.mean()
+            body = []
+            for key in self.body_bones["body"]:
+                body.append(landmarks[key])
+            center = np.mean(np.array(body), 0)
+            print(center)    
 
+            if np.linalg.norm(center - self.last_center) > 0.1:
+                return False
+            
             valid = True
             testing_pose = self.conf[self.last_pose_number].items()
             for key, value in testing_pose:
