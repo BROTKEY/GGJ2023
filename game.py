@@ -35,7 +35,7 @@ while True:
     renderer.update()
     camframe = cam.frame
     renderer.drawImage(black, (0,0), (renderer.frame.shape[1], renderer.frame.shape[0]))
-    renderer.drawImage(camframe, (int((renderer.shape[0]-cam.shape[0]*renderer.ratio)/1.5),0), (np.array((cam.shape[1], cam.shape[0]))*renderer.ratio).astype(int))
+    renderer.drawImage(camframe, (int(renderer.pose_offset[0]/2),0), (np.array((cam.shape[1], cam.shape[0]))*renderer.ratio).astype(int))
     body.process_frame(camframe)
     renderer.drawPose(body.points, (0,0,255), 2)
     y,x,_ = renderer.get_frame().shape
