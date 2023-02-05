@@ -5,6 +5,7 @@ from PIL import Image
 import cv2
 import math
 
+angle_tol = np.pi/5
 class GameEngine():
     connections = {
         11 : [12,13,23],
@@ -67,7 +68,7 @@ class GameEngine():
         mask= img if img.format == "RGBA" else None
         frame.paste(img, xy, mask=mask)
         self.frame = np.array(frame.convert("RGB"))
-    
+
     def drawText(self, text, xy, size):
         self.frame = cv2.putText(self.frame, text, xy, cv2.FONT_HERSHEY_SIMPLEX, size, (0,0,0), 2, cv2.LINE_AA)
 
@@ -158,7 +159,8 @@ class PosesEngine():
         if not landmarks:
             return False
         magnitude = np.linalg.norm(landmarks[11] - landmarks[12])
-        if self.last_shoulder_dist - 0.1 <= magnitude <= self.last_shoulder_dist + 0.1:
+        # if self.last_shoulder_dist - 0.1 <= magnitude <= self.last_shoulder_dist + 0.1:
+        if True:
             angles = self.get_angles(landmarks)
 
             body = []
@@ -177,7 +179,7 @@ class PosesEngine():
                 if not valid:
                     return valid
                 anglediff = (angles[key] - value + math.pi + math.pi*2) % (math.pi*2) - math.pi
-                valid = (anglediff <= 0.3 and anglediff >= -0.3)
+                valid = (anglediff <= angle_tol and anglediff >= -angle_tol)
                 valid = valid
 
             return valid
@@ -190,23 +192,25 @@ class PosesEngine():
     def calculatePose(self, center, screenSizeX,screenSizeY, pose_number):
         center = np.array(center)/ np.array([screenSizeY, screenSizeX])
 
-        shoulder_dist = float(self.conf[pose_number]["shoulder_dist"])
+        # shoulder_dist = float(self.conf[pose_number]["shoulder_dist"])
+        try:
+            shoulder_dist = float(self.conf[pose_number]["shoulder_dist"])
+        except:
+            shoulder_dist = 0.1
         upper_body_dist = shoulder_dist * 1.8
         hip_dist = shoulder_dist * 0.8
 
         body = self.calculateBody(center, shoulder_dist, upper_body_dist, hip_dist, float(self.conf[pose_number]["body"]))
 
-        # elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_l"])))
-        # elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, self.invertAngle(float(self.conf[pose_number]["upper_arm_r"])))
-        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, float(self.conf[pose_number]["upper_arm_l"]))
-        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, float(self.conf[pose_number]["upper_arm_r"]))
+        elbow_l = self.calculatePartFromAngle(body[1], shoulder_dist,0.5, float(self.conf[pose_number]["upper_arm_r"]))
+        elbow_r = self.calculatePartFromAngle(body[3], shoulder_dist,0.5, float(self.conf[pose_number]["upper_arm_l"]))
         wrist_r = self.calculatePartFromAngle(elbow_r, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_l"]))
         wrist_l = self.calculatePartFromAngle(elbow_l, shoulder_dist,1, float(self.conf[pose_number]["lower_arm_r"]))
 
-        knee_l = self.calculatePartFromAngle(body[0], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_l"]))
-        knee_r = self.calculatePartFromAngle(body[2], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_r"]))
-        ankle_l = self.calculatePartFromAngle(knee_l, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_l"]))
-        ankle_r = self.calculatePartFromAngle(knee_r, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_r"]))
+        knee_l = self.calculatePartFromAngle(body[0], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_r"]))
+        knee_r = self.calculatePartFromAngle(body[2], shoulder_dist,1, float(self.conf[pose_number]["upper_leg_l"]))
+        ankle_l = self.calculatePartFromAngle(knee_l, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_r"]))
+        ankle_r = self.calculatePartFromAngle(knee_r, shoulder_dist,1, float(self.conf[pose_number]["lower_leg_l"]))
 
         self.last_shoulder_dist = shoulder_dist
         self.last_pose_number = pose_number
