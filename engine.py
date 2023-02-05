@@ -5,6 +5,7 @@ from PIL import Image
 import cv2
 import math
 
+angle_tol = np.pi/5
 class GameEngine():
     connections = {
         11 : [12,13,23],
@@ -154,7 +155,8 @@ class PosesEngine():
         if not landmarks:
             return False
         magnitude = np.linalg.norm(landmarks[11] - landmarks[12])
-        if self.last_shoulder_dist - 0.1 <= magnitude <= self.last_shoulder_dist + 0.1:
+        # if self.last_shoulder_dist - 0.1 <= magnitude <= self.last_shoulder_dist + 0.1:
+        if True:
             angles = self.get_angles(landmarks)
 
             body = []
@@ -173,7 +175,7 @@ class PosesEngine():
                 if not valid:
                     return valid
                 anglediff = (angles[key] - value + math.pi + math.pi*2) % (math.pi*2) - math.pi
-                valid = (anglediff <= 0.3 and anglediff >= -0.3)
+                valid = (anglediff <= angle_tol and anglediff >= -angle_tol)
                 valid = valid
 
             return valid
