@@ -1,58 +1,3 @@
-0: # T Pose to start
-  lower_arm_l: 90
-  upper_arm_l: 90
-  lower_arm_r: -90
-  upper_arm_r: -90
-  lower_leg_l: 0
-  upper_leg_l: 0
-  lower_leg_r: 0
-  upper_leg_r: 0
-  body: 180
-  shoulder_dist: 0.20
-1:
-  lower_arm_l: 180
-  upper_arm_l: 90
-  lower_arm_r: 180
-  upper_arm_r: -90
-  lower_leg_l: 0
-  upper_leg_l: 0
-  lower_leg_r: 0
-  upper_leg_r: 0
-  body: 180
-  shoulder_dist: 0.20
-2:
-  lower_arm_l: 180
-  upper_arm_l: 90
-  lower_arm_r: -90
-  upper_arm_r: -90
-  lower_leg_l: 0
-  upper_leg_l: 0
-  lower_leg_r: 0
-  upper_leg_r: 0
-  body: 180
-  shoulder_dist: 0.20
-3:
-  lower_arm_l: 90
-  upper_arm_l: 90
-  lower_arm_r: 180
-  upper_arm_r: -90
-  lower_leg_l: 0
-  upper_leg_l: 0
-  lower_leg_r: 0
-  upper_leg_r: 0
-  body: 180
-  shoulder_dist: 0.20
-4:
-  lower_arm_l: -90
-  upper_arm_l: 90
-  lower_arm_r: 90
-  upper_arm_r: -90
-  lower_leg_l: 0
-  upper_leg_l: 0
-  lower_leg_r: 0
-  upper_leg_r: 0
-  body: 180
-  shoulder_dist: 0.20
 5:
   lower_arm_l: 90
   upper_arm_l: 90
@@ -75,17 +20,6 @@ dog:
   lower_leg_r : -24.393941797402544
   body : 43.79628747426414
   shoulder_dist: 0.15
-tree:
-  lower_arm_l : -159.28040303694323
-  lower_arm_r : 159.09928213570902
-  upper_arm_l : 174.1812230201589
-  upper_arm_r : -174.4766845308749
-  upper_leg_l : 41.99165577816164
-  upper_leg_r : 4.63388826409376
-  lower_leg_l : -88.66147803566109
-  lower_leg_r : 2.9957748548935803
-  body : -179.2809683425172
-  shoulder_dist: 0.15
 warrior:
   lower_arm_l : 84.81184389594303
   lower_arm_r : -83.44029034749674
@@ -96,4 +30,15 @@ warrior:
   lower_leg_l : -8.762065547324843
   lower_leg_r : -52.873566444726755
   body : 177.84975866213725
+  shoulder_dist: 0.15
+tree:
+  lower_arm_l : -159.29179435773392
+  lower_arm_r : 151.86682193328514
+  upper_arm_l : 169.55793851590076
+  upper_arm_r : -174.58277412212067
+  upper_leg_l : 61.92392755554797
+  upper_leg_r : 5.942062861800709
+  lower_leg_l : -51.85515883987422
+  lower_leg_r : -8.350557343732767
+  body : -178.47724929186606
   shoulder_dist: 0.15
