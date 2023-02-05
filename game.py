@@ -2,10 +2,13 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from random import randint
+from engine import BodyEngine, GameEngine, PosesEngine, Camera
 from engine import BodyEngine, GameEngine, PosesEngine, ActionQueue
 from datetime import datetime
 
-renderer = GameEngine(cv2.VideoCapture(0))
+background = cv2.imread("debugger.jpeg")
+cam = Camera()
+renderer = GameEngine((1280,720), background, cam.shape)
 body = BodyEngine()
 shadow = PosesEngine()
 queue = ActionQueue()
@@ -20,14 +23,19 @@ score=0
 valid_time = 0
 
 last_time = datetime.now()
+duck = cv2.imread("debugger_transparent.png", cv2.IMREAD_UNCHANGED)
 
 # Run the game loop
 running = True
 while running:
     renderer.update()
-    body.process_frame(renderer.get_frame())
+    camframe = cam.frame
+    body.process_frame(camframe)
+    # renderer.frame = cv2.line(renderer.frame, (0,0), (1000000,1000000), (255,255,255), 10000)
+    # renderer.drawImage(duck, (320,230), (128,128))
+    # renderer.drawImage(camframe, (160,0), (960, 720))
     renderer.drawPose(body.points, (0,0,0), 5)
-    y,x,_ = renderer.get_frame().shape
+    # y,x,_ = renderer.get_frame().shape
     valid = False
     if queue.getFirstFromQueue() == 0:
         new_pose = shadow.calculatePose([200,300], x,y, pose_number)
@@ -65,5 +73,5 @@ while running:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-renderer.close()
+cam.close()
 cv2.destroyAllWindows()
