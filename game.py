@@ -5,6 +5,7 @@ from random import randint
 from engine import BodyEngine, GameEngine, PosesEngine, Camera
 from engine import BodyEngine, GameEngine, PosesEngine, ActionQueue
 from datetime import datetime
+import time
 import random, yaml
 
 background = cv2.imread("./img/background.png")
@@ -25,9 +26,50 @@ valid_time = 0
 
 last_time = datetime.now()
 cool_down = datetime.now()
+running = True
+
+black = cv2.imread("Black.png")
+
+# Startscreen
+while True:
+    renderer.update()
+    camframe = cam.frame
+    renderer.drawImage(black, (0,0), (renderer.frame.shape[1], renderer.frame.shape[0]))
+    renderer.drawImage(camframe, (int((renderer.shape[0]-cam.shape[0]*renderer.ratio)/1.5),0), (np.array((cam.shape[1], cam.shape[0]))*renderer.ratio).astype(int))
+    body.process_frame(camframe)
+    renderer.drawPose(body.points, (0,0,255), 2)
+    y,x,_ = renderer.get_frame().shape
+    target_pose = shadow.calculatePose([y/2,x/2], x,y, 0)
+    valid = shadow.checkPose(body.points)
+    now = datetime.now()
+    timedelta = (now - last_time).total_seconds()
+    renderer.drawText("T-Pose to start", (508,64), 1)
+    if valid:
+        valid_time += 200 * timedelta
+        if valid_time > 255:
+            valid_time = 0
+            break
+    else:
+        if valid_time < 0:
+            valid_time = 0
+        else:
+            valid_time -= 250 * timedelta
+    last_time = now
+
+    renderer.drawPose(target_pose, (0,255,255-valid_time), 20)
+    cv2.imshow("\"Game\"", renderer.get_frame())
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        running = False
+        break
+
+# 3 Second blackscreen
+renderer.update()
+renderer.drawImage(black, (0,0), (renderer.frame.shape[1], renderer.frame.shape[0]))
+cv2.imshow("\"Game\"", renderer.get_frame())
+cv2.waitKey(1)
+time.sleep(3)
 
 # Run the game loop
-running = True
 while running:
     renderer.update()
     camframe = cam.frame

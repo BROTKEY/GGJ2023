@@ -33,8 +33,8 @@ class GameEngine():
 
     def __init__(self, xy_size, background, camera_size):
         self.bg = cv2.resize(background, xy_size)
-        ratio = xy_size[1] / camera_size[0]
-        self.shape = np.array((camera_size[1]*ratio, camera_size[0]*ratio)).astype(int)
+        self.ratio = xy_size[1] / camera_size[0]
+        self.shape = np.array((camera_size[1]*self.ratio, camera_size[0]*self.ratio)).astype(int)
         self.pose_offset = np.array(((xy_size[0] - camera_size[1]) / 2, 0))
         self.update()
 
@@ -63,6 +63,9 @@ class GameEngine():
         mask= img if img.format == "RGBA" else None
         frame.paste(img, xy, mask=mask)
         self.frame = np.array(frame.convert("RGB"))
+    
+    def drawText(self, text, xy, size):
+        self.frame = cv2.putText(self.frame, text, xy, cv2.FONT_HERSHEY_SIMPLEX, size, (0,0,0), 2, cv2.LINE_AA)
 
     def get_frame(self):
         return self.frame
@@ -101,7 +104,7 @@ class PosesEngine():
         return (left_hip, left_shoulder, right_hip, right_shoulder)
 
     def calculatePartFromAngle(self, origin, shoulder_dist, ratio, angle):
-        return [origin[0] + np.sin(angle) * shoulder_dist, origin[1] + np.cos(angle)*(shoulder_dist*ratio)]
+        return [origin[0] + np.sin(angle) * (shoulder_dist*ratio), origin[1] + np.cos(angle)*(shoulder_dist*ratio)]
 
     def toCoords(self, body, elbow_l, elbow_r, wrist_l, wrist_r, knee_l, knee_r, ankle_l, ankle_r):
         return {
