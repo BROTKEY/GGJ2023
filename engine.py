@@ -54,6 +54,10 @@ class GameEngine():
                     start_point = points[point] * self.shape + self.pose_offset/2
                     end_point = points[endpoint] * self.shape + self.pose_offset/2
                     self.frame = cv2.line(self.frame, start_point.astype(int), end_point.astype(int), color, thicc)
+        if 0 in points:
+            point = points[0] * self.shape + self.pose_offset/2
+            magnitude = np.linalg.norm(points[11] - points[12])
+            self.frame = cv2.circle(self.frame, point.astype(int), int(magnitude*300), color, thicc)
 
     def drawImage(self, image, xy, size):
         img = cv2.resize(image, size)

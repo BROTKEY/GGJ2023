@@ -26,6 +26,7 @@ pose_number = random.choice(poses_avail)
 new_pose = {}
 score=0
 valid_time = 0
+camera_enabled = False
 
 last_time = datetime.now()
 running = True
@@ -77,7 +78,9 @@ while running:
     renderer.update()
     camframe = cam.frame
     body.process_frame(camframe)
+    if camera_enabled: renderer.drawImage(camframe, (int((renderer.shape[0]-cam.shape[0]*renderer.ratio)/1.5),0), (np.array((cam.shape[1], cam.shape[0]))*renderer.ratio).astype(int))
     renderer.drawPose(body.points, (0,0,0), 5)
+    renderer.drawText("Score: {}".format(score), (16,32), 1)
     y,x,_ = renderer.get_frame().shape
     valid = False
     if queue.getFirstFromQueue() == 0:
@@ -114,9 +117,12 @@ while running:
 
 
     cv2.imshow("\"Game\"", renderer.get_frame())
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord('q'):
         print(shadow.get_angles(body.points, deg=True))
         break
+    elif key == ord("c"):
+        camera_enabled = not camera_enabled
 
 cam.close()
 cv2.destroyAllWindows()
