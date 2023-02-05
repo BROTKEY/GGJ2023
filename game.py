@@ -7,6 +7,7 @@ from engine import BodyEngine, GameEngine, PosesEngine, ActionQueue
 from datetime import datetime
 import time
 import random, yaml
+import simpleaudio as sa
 
 background = cv2.imread("./img/background.png")
 cam = Camera()
@@ -14,8 +15,9 @@ renderer = GameEngine((1280,720), background, cam.shape)
 body = BodyEngine()
 shadow = PosesEngine()
 queue = ActionQueue()
+success_wav = sa.WaveObject.from_wave_file("success.wav")
 
-startscreen = False
+startscreee = False
 
 shadow_color = (100,100,100)
 shadow_thickness = 10
@@ -23,7 +25,6 @@ skeleton_color = (0,0,0)
 skeleton_thickness = 4
 poses_avail = list(yaml.load(open("poses.yaml","r"), Loader=yaml.FullLoader).keys())
 new_pose = {}
-score=0
 valid_time = 0
 camera_enabled = False
 
@@ -74,7 +75,6 @@ while running:
     body.process_frame(camframe)
     if camera_enabled: renderer.drawImage(camframe, (int((renderer.shape[0]-cam.shape[0]*renderer.ratio)/1.5),0), (np.array((cam.shape[1], cam.shape[0]))*renderer.ratio).astype(int))
     renderer.drawPose(body.points, (0,0,0), 5)
-    renderer.drawText("Score: {}".format(score), (16,32), 1)
     y,x,_ = renderer.get_frame().shape
     valid = False
 
@@ -92,9 +92,9 @@ while running:
             valid_time += 100 * timedelta
             if valid_time > 255:
                 valid_time = 0
-                score += 1
-                queue.addToQueue(2)
+                queue.addToQueue(0)
                 queue.forwardQueue()
+                success_wav.play()
         else:
             if valid_time < 0:
                 valid_time = 0
