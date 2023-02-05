@@ -22,7 +22,6 @@ shadow_thickness = 10
 skeleton_color = (0,0,0)
 skeleton_thickness = 4
 poses_avail = list(yaml.load(open("poses.yaml","r"), Loader=yaml.FullLoader).keys())
-pose_number = random.choice(poses_avail)
 new_pose = {}
 score=0
 valid_time = 0
@@ -44,7 +43,8 @@ if startscreen:
         renderer.drawPose(body.points, (0,0,255), 2)
         y,x,_ = renderer.get_frame().shape
         target_pose = shadow.calculatePose([y/2,x/2], x,y, 0)
-        valid = shadow.checkPose(body.points)
+        valid, acc = shadow.checkPose(body.points)
+        print(acc)
         now = datetime.now()
         timedelta = (now - last_time).total_seconds()
         renderer.drawText("T-Pose to start", (508,64), 1)
@@ -57,7 +57,7 @@ if startscreen:
             if valid_time < 0:
                 valid_time = 0
             else:
-                valid_time -= 250 * timedelta
+                valid_time -= 25 * timedelta
         last_time = now
 
         renderer.drawPose(target_pose, (0,255,255-valid_time), 20)
@@ -77,13 +77,15 @@ while running:
     renderer.drawText("Score: {}".format(score), (16,32), 1)
     y,x,_ = renderer.get_frame().shape
     valid = False
+
     if queue.getFirstFromQueue() == 0:
         new_pose = shadow.calculatePose([3*y/4 , x/4], x,y, random.choice(poses_avail))
         print(new_pose)
         queue.addToQueue(1)
         queue.forwardQueue()
     elif queue.getFirstFromQueue() == 1:
-        valid = shadow.checkPose(body.points)
+        valid, acc = shadow.checkPose(body.points)
+        print(acc)
         now = datetime.now()
         timedelta = (now - last_time).total_seconds()
         if valid:
@@ -99,10 +101,6 @@ while running:
             else:
                 valid_time -= 25 * timedelta
         last_time = now
-    elif queue.getFirstFromQueue() == 2:
-        pose_number = random.choice(poses_avail)
-        queue.addToQueue(0)
-        queue.forwardQueue()
     elif queue.getFirstFromQueue() == 3:
         pass
 
@@ -117,6 +115,9 @@ while running:
         break
     elif key == ord("c"):
         camera_enabled = not camera_enabled
+    elif key == ord("e"):
+        queue.addToQueue(0)
+        queue.forwardQueue()
 
 cam.close()
 cv2.destroyAllWindows()

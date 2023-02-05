@@ -158,7 +158,7 @@ class PosesEngine():
 
     def checkPose(self, landmarks):
         if not landmarks:
-            return False
+            return (False, 0)
         magnitude = np.linalg.norm(landmarks[11] - landmarks[12])
         # if self.last_shoulder_dist - 0.1 <= magnitude <= self.last_shoulder_dist + 0.1:
         if True:
@@ -171,20 +171,19 @@ class PosesEngine():
 
             # if np.linalg.norm(center - self.last_center) > 0.1:
             #     return False
-
             valid = True
             testing_pose = self.conf[self.last_pose_number].items()
+            diffs = []
             for key, value in testing_pose:
                 if key == "shoulder_dist":
                     continue
-                if not valid:
-                    return valid
                 anglediff = (angles[key] - value + math.pi + math.pi*2) % (math.pi*2) - math.pi
-                valid = (anglediff <= angle_tol and anglediff >= -angle_tol)
+                diffs.append(np.abs(anglediff))
+                if not (anglediff <= angle_tol and anglediff >= -angle_tol):
+                    valid = False
                 valid = valid
 
-            return valid
-        return False
+            return (valid, 100 -((np.mean(diffs) /math.pi)) *100 )
 
     def invertAngle(self, angle):
         return (angle + math.pi) % (2 * math.pi)
@@ -254,7 +253,7 @@ class ConfigLoader:
 
 class ActionQueue:
     def __init__(self):
-        self.actions ={0: "new_pose", 1: "check_valid", 2: "gen_new_number", 3: "wait_for_event"}
+        self.actions ={0: "new_pose", 1: "check_valid", 3: "wait_for_event"}
         self.queue = [0]
 
     def addToQueue(self,action):
